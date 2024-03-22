@@ -1,1 +1,69 @@
-This is jwt Authentication Setup
+laravel install and database setup er por akhon jwt authentication setup krte hobe.
+
+1. prothome jwt-auth install krte hobe
+--composer require tymon/jwt-auth
+
+2. valo vabe complete hole service provider class ti 'config/app.php' file e add krte hobe--
+'providers' => [
+    Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+]
+
+3. ai config file e 'jwt.php' file publish krte hobe, akti vendor comman run krte hobe--
+--php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+
+4. jwt.php file publish er por jwt:secret key generate krte hobe command run kre-
+--php artisan jwt:secret
+'.env' file e 'JWT_SECRET=fxodsdodeghcbar' ai dhorner akti key thakbe.
+
+5. laravel project install krle default vabe akti user model deya thake. seti te kichu 'Facdades' and 'Function' add krte hobe.
+namespace App\Models;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+class User extends Authenticatable implements JWTSubject
+{
+  public function getJWTIdentifier()
+  {
+     return $this->getKey();
+  }
+
+  public function getJWTCustomClaims()
+  {
+     return [];
+  }
+}
+
+6. 'config/Auth.php' file e guard ke bole dite hobe nicher code gulo--
+'defaults' => [
+    'guard' => 'api',
+    'passwords' => 'users',
+],
+
+'guards' => [
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+    ],
+],
+
+adike 'guard' er 'api' ke default vabe rakha hoise, default vabe 'web' rekhe nicheo new 'guard'=>'api' declare kra jay.
+
+to atogukui chilo jwt authentication setup, 
+pore route and controller alada vabe kajer jnne create krte hobe.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
