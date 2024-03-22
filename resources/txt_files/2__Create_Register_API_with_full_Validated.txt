@@ -1,1 +1,78 @@
-register file create
+jwt authentication valo vabe complete hoye gele register,login,logout page gulor api diye kaj krte hobe.
+
+=======Create Controller========
+--php artisan make:controller API\UserController
+'controller' folder e API name folder er vetor 'UserController.php'file thakbe.
+
+jehetu register krte data validate krte hoy, password hashing krte hoy, tai eder 'Facades' gulo upore use krte hobe.
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
+class UserController extends Controller
+{
+    public function register(Request $request)
+    {
+
+        // form theke je value gulo pabo, adike sugulo validator diye check kra hobe valid kina
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|min:2|max:100',
+            'email'=>'required|string|email|max:100|unique:users',
+            'password'=>'required|string|min:6|confirmed',
+        ]);
+
+        // jdi form e kono input e error thake tahle sei error show krar jnne fails() use hoise
+        if ($validator->fails())
+        {
+            return response()->json($validator->errors());
+        }
+
+        // ar jdi sob thik thake, tahle amra akta user register krbo 'create' function er dhara
+        // sathe json er dhara msg, user value pathabo.
+        $user = User::create([
+            'name'=>$request->name,
+            'email'=>$request->email,
+            'password'=>Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'msg'=>'User Registerd Successfully',
+            'user'=>$user,
+        ]);
+    }
+}
+
+======Route api.php=====
+Controller create hoye gele akhon amader 'route' tike 'api.php' file e declare krte hobe. jehetu amra api niye kaj krte tai 'api.php' file e api route rakhte hoy. ata laravel er default api system. ar domain er por obossoi '/api'diye check krte hobe.
+
+route::group(['middleware'=>'api'], function(){
+    route::post('/register', [UserController::class, 'register']);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
