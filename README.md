@@ -30,6 +30,9 @@ Then Complete this project Step by Step in the Below:
 
 - [JWT Authentication Setup](./resources/txt_files/1__JWT_Authentication_Setup.txt)
 - [Create Register API with full Validated](./resources/txt_files/2__Create_Register_API_with_full_Validated.txt)
+- [Create a Register View with full Validated Form](./resources/txt_files/3__Create_Register_View_with_full_validated_form.txt)
+- [Integrate Register API to Register Form](./resources/txt_files/4_Integrate_Register_API_to_register_form.txt)
+
 
 
 
