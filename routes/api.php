@@ -18,9 +18,10 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-// http://127.0.0.1:8000/api/register @ $
+// http://127.0.0.1:8000/api/register @ $ #
 
 route::group(['middleware'=>'api'], function(){
+
     route::post('/register', [UserController::class, 'register']);
 });
 
