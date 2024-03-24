@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 route::group(['middleware'=>'api'], function(){
 
     route::post('/register', [UserController::class, 'register']);
+    route::post('/login', [UserController::class, 'login']);
 });
 
 
