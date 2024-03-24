@@ -1,0 +1,50 @@
+backend theke login api data niye view te integrate krte hobe. token ke local storage e rakhte hobe use er jnne. jdi user login hoy tahle login and register page e jete parbe na, ar na hole login page e jete parbe.
+
+==========route======
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+Route::get('/profile', function () {
+    return view('auth.profile');
+})->name('profile');
+
+======blade file======
+<h1>Log In User</h1>
+<form id="login_form">
+    <label for="">Your Email: </label>
+    <input type="email" name="email" placeholder="Enter email"><br><br>
+    <label for="">Your Password: </label>
+    <input type="password" name="password" placeholder="Enter password"><br><br>
+    <button type="submit">Submit</button>
+</form>
+<ul id="error" style="color:red"></ul>
+
+<script>
+    $(document).ready(function(){
+        let DomainName = window.location.origin;
+        $('#login_form').submit(function(event){
+            event.preventDefault();
+            let formData = $(this).serialize();
+            $('#error').empty()
+            $.ajax({
+                url: `${DomainName}/api/login`,
+                type: 'POST',
+                data: formData,
+                success: function(res){
+                    if (res.success == false) {
+                        $('#error').append(`<li>${res.msg}</li>`)
+                    } else if(res.success == true){
+                        $('#error').append(`<li>${res.msg}</li>`);
+                        localStorage.setItem("token", res.token);
+                        window.open('/profile', '_self')
+                    } else {
+                        $.each(res, function(key, value) {
+                            $('#error').append(`<li>${value}</li>`)
+                        });
+                    }
+                }
+            })
+        })
+    })
+</script>

@@ -1,0 +1,38 @@
+add a login function in UserController
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'=>'required|string|email|',
+            'password'=>'required|string|min:6',
+        ]);
+
+        if ($validator->fails())
+        {
+            return response()->json(['errors'=>$validator->errors()]);
+        }
+
+        $token = auth()->attempt($validator->validated());
+
+        if (!$token)
+        {
+            return response()->json([
+                'success'=>false,
+                'msg' =>'Username and Password is uncorrect',
+            ]);
+
+        }
+
+        return response()->json([
+            'success' => true,
+            'msg'=>'Successfully Login',
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => auth()->factory()->getTTL()*60
+        ]);
+    }
+
+
+add an api route in route/api.php file
+route::post('/login', [UserController::class, 'login']);
+
