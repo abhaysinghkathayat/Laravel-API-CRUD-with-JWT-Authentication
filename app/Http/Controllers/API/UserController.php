@@ -39,4 +39,45 @@ class UserController extends Controller
             'user'=>$user,
         ]);
     }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'=>'required|string|email|',
+            'password'=>'required|string|min:6',
+        ]);
+
+        if ($validator->fails())
+        {
+            return response()->json($validator->errors());
+        }
+        // token tokhon e dibe jokhon email password database er sathe match krbe,
+        // jdi email, password valid pay, database er sathe match na kore
+        // tahle nicher success false return krbe.
+        // ar jdi data valid thake, data base e register kra data match kore
+        // tahle success true dibe. ar jdi valid na hoy, match na kore, tahle
+        // upore deya '$validator->errors()' theke laravel er default error return krbe.
+        $token = auth()->attempt($validator->validated());
+        if (!$token)
+        {
+            return response()->json([
+                'success'=>false,
+                'msg' =>'Username and Password is uncorrect',
+            ]);
+
+        }
+        return response()->json([
+            'success' => true,
+            'msg'=>'Successfully Login',
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => auth()->factory()->getTTL()*60
+        ]);
+    }
+
+
+
+
+
+
 }
