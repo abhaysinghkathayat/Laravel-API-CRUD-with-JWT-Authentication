@@ -1,0 +1,28 @@
+======api router======
+route::get('/logout', [UserController::class, 'logout']);
+
+
+======UserController======
+    public function logout()
+    {
+        try {
+            auth()->logout();
+            return response()->json([
+                'success' => true,
+                'msg' => 'User Log out Successfull',
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' => $e->getMessage(),
+            ]);
+
+        }
+
+    }
+
+try and catch diye exception dhrote hobe, na hoy frontend e onek boro error code jabe, jeta frontend e error dhorte onek problem hoy.
+
+
+

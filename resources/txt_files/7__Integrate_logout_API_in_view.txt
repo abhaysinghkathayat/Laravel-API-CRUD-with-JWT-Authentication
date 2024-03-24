@@ -1,0 +1,25 @@
+<h1>User Profile</h1>
+<button id="logout">Log Out</button>
+
+
+<script>
+        const DomainName = window.location.origin;
+        // let token = localStorage.getItem('token');
+        $('#logout').on('click',function(){
+            $.ajax({
+                url: `${DomainName}/api/logout`,
+                type: 'GET',
+                headers: {'Authorization': token},
+                success: function(res){
+                    if (res.success == true) {
+                        console.log(res.msg);
+                        localStorage.removeItem('token');
+                        window.open('/login', '_self');
+                    } else {
+                        alert(res.msg);
+                    }
+                }
+            })
+        })
+</script>
+
