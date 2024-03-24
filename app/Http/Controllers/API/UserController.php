@@ -5,8 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Stmt\TryCatch;
 
 class UserController extends Controller
 {
@@ -75,8 +77,24 @@ class UserController extends Controller
         ]);
     }
 
+    public function logout()
+    {
+        try {
+            auth()->logout();
+            return response()->json([
+                'success' => true,
+                'msg' => 'User Log out Successfull',
+            ]);
 
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' => $e->getMessage(),
+            ]);
 
+        }
+
+    }
 
 
 
