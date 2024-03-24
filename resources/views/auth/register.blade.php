@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Register</title>
-</head>
-<body>
+@extends('auth.master')
+@section('title', 'Register Page')
 
+@section('content')
 <h1>Register A User</h1>
 <form id="register_form">
     <label for="">Your Name: </label>
@@ -21,7 +15,9 @@
     <button type="submit">Submit</button>
 </form>
 <ul id="error" style="color:red"></ul>
+@endsection
 
+@push('js')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
@@ -63,16 +59,4 @@
         })
     })
 </script>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
+@endpush
