@@ -32,7 +32,7 @@
                         $('#error').append(`<li>${res.msg}</li>`)
                     } else if(res.success == true){
                         $('#error').append(`<li>${res.msg}</li>`);
-                        localStorage.setItem("token", res.token);
+                        localStorage.setItem("token", `${res.token_type} ${res.token}`);
                         window.open('/profile', '_self')
                     } else {
                         $.each(res, function(key, value) {
