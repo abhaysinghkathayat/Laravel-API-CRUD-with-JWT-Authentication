@@ -25,6 +25,7 @@ Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
+
 Route::get('/profile', function () {
     return view('auth.profile');
 })->name('profile');
