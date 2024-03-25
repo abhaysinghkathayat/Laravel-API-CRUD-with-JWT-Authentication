@@ -1,0 +1,80 @@
+route::post('/update-profile', [UserController::class, 'updateProfile']);
+
+UserController function
+    public function updateProfile(Request $request)
+    {
+
+        if (auth()->user()){
+            $validator = Validator::make($request->all(), [
+                'id'=>'required',
+                'name'=>'required|string',
+                'email'=>'required|string|email',
+            ]);
+
+            if ($validator->fails())
+            {
+                return response()->json($validator->errors());
+            }
+
+            $user = User::find($request->id);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->save();
+            return response()->json([
+                'success' => true,
+                'msg' => 'User Updated Successfully',
+                'data' => $user,
+            ]);
+
+
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'msg' => 'User Not Authenticated',
+            ]);
+        }
+
+
+    }
+
+
+
+        // update profile code
+        $('#update_form').submit(function(event){
+            event.preventDefault();
+            let formData = $(this).serialize();
+            $('#error').empty()
+            $.ajax({
+                url: `${DomainName}/api/update-profile`,
+                type: 'POST',
+                data: formData,
+                headers: {'Authorization': token},
+                success: function(res){
+                    if (res.success == true) {
+                            $('#error').append(`<h3 style="color:green;">${res.msg}</h3>`)
+                            setTimeout(() => {
+                                $('#error').empty()
+                            }, 1500);
+
+                    } else if (res.success == false) {
+                            $('#error').append(`<h3 style="color:red;">${res.msg}</h3>`)
+                            setTimeout(() => {
+                                $('#error').empty()
+                            }, 1500);
+
+                    } else {
+                        $.each(res, function(key, value) {
+                            $('#error').append(`<h3 style="color:red;">${value}</h3>`)
+                        });
+                        setTimeout(() => {
+                                $('#error').empty()
+                        }, 1500);
+                    }
+                }
+            })
+        })
+
+
+
+
