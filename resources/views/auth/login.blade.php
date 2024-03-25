@@ -33,6 +33,7 @@
                     } else if(res.success == true){
                         $('#error').append(`<li>${res.msg}</li>`);
                         localStorage.setItem("token", `${res.token_type} ${res.token}`);
+                        localStorage.setItem("token_expires", `${res.expires_in}`);
                         window.open('/profile', '_self')
                     } else {
                         $.each(res, function(key, value) {
