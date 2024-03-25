@@ -1,0 +1,81 @@
+make profile api route
+route::get('/profile', [UserController::class, 'profile']);
+
+make function in UserController
+    public function profile()
+    {
+        try {
+            return response()->json([
+                'success' => true,
+                'data' => auth()->user(),
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' => $e->getMessage(),
+            ]);
+
+        }
+
+    }
+
+
+===========Integrate in Blade File============
+<button id="logout">Log Out</button>
+<h1>User Profile</h1>
+
+<h2>Hi, <span id="name" style="color:brown; font-weight:600"></span></h2>
+<p>Email: <span id="email"></span> <span id="verify"></span></p>
+
+<form id="update_form">
+    <label for="">Your Name: </label>
+    <input type="text" name="name" id="nameInput" placeholder="Enter name"><br><br>
+    <label for="">Your Email: </label>
+    <input type="email" name="email" id="emailInput" placeholder="Enter email"><br><br>
+    <button type="submit">Submit</button>
+</form>
+
+=======javscript code============
+const DomainName = window.location.origin;
+let token = localStorage.getItem('token');
+
+// fetching profile data from api
+$(document).ready(function(){
+  $.ajax({
+    url: `${DomainName}/api/profile`,
+    type: 'GET',
+    headers: {'Authorization': token},
+    success: function(res){
+      if (res.success == true) {
+         let data = res.data;
+         $('#name').text(data.name)
+         $('#email').text(data.email)
+         $('#nameInput').val(data.name)
+         $('#emailInput').val(data.email)
+
+         if (data.email_verified_at == null || data.email_verified_at == '' ) {
+            $('#verify').html(`<a href="">Verify</a>`);
+         } else {
+            $('#verify').html(`verified`);
+         }
+
+      } else {
+        res.msg
+      }
+    }
+  })
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
