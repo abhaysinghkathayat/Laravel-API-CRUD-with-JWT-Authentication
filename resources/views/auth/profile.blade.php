@@ -3,12 +3,12 @@
 @section('title', 'Profile Page')
 
 @section('content')
-<button id="logout" style="position: absolute;top: 10px;right: 10px;background: #ff4848;color: white;padding: 10px 30px;font-size: 20px;cursor: pointer;border: 0"
+<button id="logout" style="position: absolute;top: 10px;right: 10px;background: #ff4848;color: white;padding: 5px 25px;font-size: 18px;cursor: pointer;border: 1px solid #19ce55;"
 >Log Out</button>
 
 
-<h1>User Profile</h1>
-<h2>Hi, <span id="name" style="color:brown; font-weight:600"></span></h2>
+<h1 style="margin-top: 0;background:#ff4848;color:aliceblue">User Profile</h1>
+<h2 style="margin-top: 50px;">Hi, <span id="name" style="color:brown; font-weight:600"></span></h2>
 <p style="color: steelblue; font-weight:600">Email: <span id="email"></span> <span id="verify"></span></p>
 
 <form id="update_form">
@@ -29,48 +29,41 @@
 
 @push('js')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-{{-- 12345678 --}}
+
 <script>
 
-// Function to redirect to login page after token expiration
+    // Function to redirect to login page after token expiration and remove token from local storage
 function redirectToLoginAfterExpiration(expirationTime) {
     const currentTime = Date.now();
     const timeUntilExpiration = expirationTime - currentTime;
-
     if (timeUntilExpiration > 0) {
         setTimeout(function() {
+            // Remove token from local storage
+            localStorage.removeItem('token');
+            // Redirect to login page
             window.location.href = '/login';
         }, timeUntilExpiration);
     } else {
-        // Token has already expired, redirect immediately
+        // Token has already expired, remove it immediately
+        localStorage.removeItem('token');
+        // Redirect to login page
         window.location.href = '/login';
     }
 }
 
 // Function to check JWT token expiration
 function checkTokenExpiration() {
-    // const token = localStorage.getItem('jwt_token'); // Assuming you stored the token in local storage
-
     if (!token) {
         // Token not found, redirect to login page
         window.location.href = '/login';
         return;
     }
-
     // Decode the token to get expiration time
     const decodedToken = JSON.parse(atob(token.split('.')[1]));
     const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
-
-    // Redirect to login page after token expiration
+    // Redirect to login page after token expiration and remove token from local storage
     redirectToLoginAfterExpiration(expirationTime);
 }
-
-// Call the function to check token expiration on page load
-// $(document).ready(function() {
-//     checkTokenExpiration();
-// });
-
-
 
         const DomainName = window.location.origin;
         // let token = localStorage.getItem('token');
@@ -158,7 +151,7 @@ function checkTokenExpiration() {
             })
         })
 
-
+        // {{-- 12345678 --}}
 
 
 </script>

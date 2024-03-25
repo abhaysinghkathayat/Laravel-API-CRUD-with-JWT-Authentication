@@ -7,11 +7,13 @@
 
     if (pathName == '/login' || pathName == '/register') {
         if (token != null ) {
-            window.open('/profile', '_self')
+            // window.open('/profile', '_self')
+            window.location.href = '/profile';
         }
     } else {
         if (token == null ) {
-            window.open('/login', '_self')
+            // window.open('/login', '_self')
+            window.location.href = '/login';
         }
     }
 
