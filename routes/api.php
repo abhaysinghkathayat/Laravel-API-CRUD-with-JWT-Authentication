@@ -25,6 +25,8 @@ route::group(['middleware'=>'api'], function(){
     route::post('/register', [UserController::class, 'register']);
     route::post('/login', [UserController::class, 'login']);
     route::get('/logout', [UserController::class, 'logout']);
+    route::get('/profile', [UserController::class, 'profile']);
+    route::post('/update-profile', [UserController::class, 'updateProfile']);
 });
 
 
