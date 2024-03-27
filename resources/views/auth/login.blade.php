@@ -1,8 +1,13 @@
-@extends('auth.master')
-@section('title', 'Log In Page')
-
-@section('content')
-<h1>Log In User</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Log In Page | User</title>
+</head>
+<body>
+    <h1>Log In User</h1>
 <form id="login_form">
     <label for="">Your Email: </label>
     <input type="email" name="email" placeholder="Enter email"><br><br>
@@ -10,10 +15,9 @@
     <input type="password" name="password" placeholder="Enter password"><br><br>
     <button type="submit">Submit</button>
 </form>
+<p>password: 12345678</p>
 <ul id="error" style="color:red"></ul>
-@endsection
 
-@push('js')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.8/axios.min.js" integrity="sha512-PJa3oQSLWRB7wHZ7GQ/g+qyv6r4mbuhmiDb8BjSFZ8NZ2a42oTtAq5n0ucWAwcQDlikAtkub+tPVCw4np27WCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
@@ -45,5 +49,8 @@
         })
     })
 </script>
-@endpush
+
+</body>
+</html>
+
 
