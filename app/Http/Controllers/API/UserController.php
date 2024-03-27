@@ -228,6 +228,28 @@ class UserController extends Controller
 
     }
 
+    public function refreshToken()
+    {
+
+        if (auth()->user()){
+
+            return response()->json([
+                'success' => true,
+                'token' => auth()->refresh(),
+                'token_type' => 'Bearer',
+                'expires_in' => auth()->factory()->getTTL()*60
+            ]);
+
+
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'msg' => 'User is Not Authenticated',
+            ]);
+        }
+    }
+
 
 
 }
