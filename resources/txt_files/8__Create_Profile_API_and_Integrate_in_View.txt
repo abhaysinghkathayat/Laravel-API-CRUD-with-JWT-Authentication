@@ -54,8 +54,8 @@ $(document).ready(function(){
          $('#nameInput').val(data.name)
          $('#emailInput').val(data.email)
 
-         if (data.email_verified_at == null || data.email_verified_at == '' ) {
-            $('#verify').html(`<a href="">Verify</a>`);
+         if (data.is_verified == 0 ) {
+            $('#verify').html(`<button id="verify-email">Verify</button>`);
          } else {
             $('#verify').html(`verified`);
          }
