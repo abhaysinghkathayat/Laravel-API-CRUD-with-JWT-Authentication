@@ -1,4 +1,4 @@
-create api route
+=====create api route=======
 route::get('/send-verify-mail/{email}', [UserController::class, 'sendVerifyMail']);
 
     // send verification mail with verify link
@@ -49,7 +49,7 @@ route::get('/send-verify-mail/{email}', [UserController::class, 'sendVerifyMail'
     }
 
 
-verifyMail blade file
+=====verifyMail blade file=====
     <h1>Laravel jwt auth API Project</h1>
 
     <p>Subject: {{$data['title']}}</p>
@@ -59,7 +59,13 @@ verifyMail blade file
     <p>Laravel JWT API</p>
 
 
-    // token link after verification message
+
+======create web.php route and 404 blade file======
+route::get('/verify-mail/{token}', [UserController::class, 'verificationMail']);
+
+
+
+=======// token link after verification message======
     public function verificationMail($token)
     {
         $user = User::where('remember_token', $token)->get();
@@ -81,7 +87,7 @@ verifyMail blade file
     }
 
 
-email verification profile blade javascript code
+======email verification profile blade javascript code======
         // Email Verification
         $('#verify').on('click',function(){
             let mail = $(this).attr('data-id');
