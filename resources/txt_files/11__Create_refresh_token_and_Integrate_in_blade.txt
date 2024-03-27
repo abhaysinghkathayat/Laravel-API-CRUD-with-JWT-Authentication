@@ -1,0 +1,74 @@
+create api router
+    route::get('/refresh-token', [UserController::class, 'refreshToken']);
+
+make function in UserController
+    public function refreshToken()
+    {
+
+        if (auth()->user()){
+
+            return response()->json([
+                'success' => true,
+                'token' => auth()->refresh(),
+                'token_type' => 'Bearer',
+                'expires_in' => auth()->factory()->getTTL()*60
+            ]);
+
+
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'msg' => 'User is Not Authenticated',
+            ]);
+        }
+    }
+
+
+blade file and javascript
+
+<button id="refresh_user" style="background: #1ec04e;color: white;padding: 5px 25px;font-size: 18px;cursor: pointer;border: 1px solid #2ce0f8;"
+    >Refresh User</button>
+
+
+    // refresh User Token
+    $('#refresh_user').on('click',function(){
+        console.log('refresh token');
+        $.ajax({
+            url: `${DomainName}/api/refresh-token`,
+            type: 'GET',
+            headers: {'Authorization': token},
+            success: function(res){
+                if (res.success == true) {
+                    localStorage.setItem("token", `${res.token_type} ${res.token}`);
+                    $('#error').append(`<h3 style="color:green;">User Refreshed</h3>`)
+                    console.log(res.token);
+                } else {
+                    alert(res.msg);
+                }
+
+            }
+        })
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
