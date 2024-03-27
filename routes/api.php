@@ -27,6 +27,7 @@ route::group(['middleware'=>'api'], function(){
     route::get('/logout', [UserController::class, 'logout']);
     route::get('/profile', [UserController::class, 'profile']);
     route::post('/update-profile', [UserController::class, 'updateProfile']);
+    route::get('/send-verify-mail/{email}', [UserController::class, 'sendVerifyMail']);
 });
 
 

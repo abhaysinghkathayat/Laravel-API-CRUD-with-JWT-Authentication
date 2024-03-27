@@ -5,13 +5,17 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
+
 
 class UserController extends Controller
 {
+    // created Register API
     public function register(Request $request)
     {
 
@@ -42,6 +46,7 @@ class UserController extends Controller
         ]);
     }
 
+    // created Login API
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -77,6 +82,7 @@ class UserController extends Controller
         ]);
     }
 
+    // created Logout API
     public function logout()
     {
         try {
@@ -96,6 +102,7 @@ class UserController extends Controller
 
     }
 
+    // created profile API
     public function profile()
     {
         try {
@@ -114,6 +121,7 @@ class UserController extends Controller
 
     }
 
+    // created profile-update API
     public function updateProfile(Request $request)
     {
 
@@ -131,6 +139,9 @@ class UserController extends Controller
 
             $user = User::find($request->id);
             $user->name = $request->name;
+            if ($user->email != $request->email) {
+                $user->is_verified = 0;
+            }
             $user->email = $request->email;
             $user->save();
             return response()->json([
@@ -144,10 +155,76 @@ class UserController extends Controller
         } else {
             return response()->json([
                 'success' => false,
-                'msg' => 'User Not Authenticated',
+                'msg' => 'User is Not Authenticated',
             ]);
         }
+    }
 
+    // send verification mail with verify link
+    public function sendVerifyMail($email)
+    {
+        if (auth()->user()){
+            $user = User::where('email', $email)->get();
+            if (count($user) > 0) {
+                // random url bananor jnne, 40ta random word nilam,domain nilam
+                // sese url banalam agula diye
+                $random = Str::random(40);
+                $domain = URL::to('/');
+                $url = $domain.'/verify-mail/'.$random;
+
+                // Mail 'view' page e email er data send krte hobe, tai $data variable e kore
+                // url, email,title,body pathiye dilam 'data' array akare.
+                $data['url'] = $url;
+                $data['email'] = $email;
+                $data['title'] = 'Email Verification';
+                $data['body'] = 'Please click here to below verify your mail';
+
+                Mail::send('verifyMail', ['data'=>$data], function($message) use ($data){
+                    $message->to($data['email'])->subject($data['title']);
+                });
+
+                $user = User::find($user[0]['id']);
+                $user->remember_token = $random;
+                $user->save();
+                return response()->json([
+                    'success' => true,
+                    'msg' => 'Mail Sent Successfully',
+                ]);
+
+
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'User not found.',
+                ]);
+            }
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'msg' => 'User is Not Authenticated',
+            ]);
+        }
+    }
+
+    // token link after verification message
+    public function verificationMail($token)
+    {
+        $user = User::where('remember_token', $token)->get();
+        if (count($user) > 0) {
+            $datetime = Carbon::now()->format('Y-m-d H:i:s');
+            $user = User::find($user[0]['id']);
+            $user->remember_token = '';
+            $user->is_verified = 1;
+            $user->email_verified_at = $datetime;
+            $user->save();
+
+            return "<h1>Email Verified Successfully</h1>";
+
+
+        } else {
+            return view('404');
+        }
 
     }
 
