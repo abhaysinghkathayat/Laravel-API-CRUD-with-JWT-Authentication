@@ -3,14 +3,19 @@
 @section('title', 'Profile Page')
 
 @section('content')
-<button id="logout" style="position: absolute;top: 10px;right: 10px;background: #ff4848;color: white;padding: 5px 25px;font-size: 18px;cursor: pointer;border: 1px solid dark;"
->Log Out</button>
+<div class="buttons" style="width: 100vw; height: auto; text-align:center; margin-top: 20px">
+    <button id="logout" style="background: #ff4848;color: white;padding: 5px 25px;font-size: 18px;cursor: pointer;border: 1px solid #2ce0f8;"
+    >Log Out</button>
+    <button id="refresh_user" style="background: #1ec04e;color: white;padding: 5px 25px;font-size: 18px;cursor: pointer;border: 1px solid #2ce0f8;"
+    >Refresh User</button>
+</div>
 
 
-<div style="margin:150px auto 0 auto ;background:#2ce0f8;color:aliceblue; width:620px;">
+
+<div style="margin:150px auto -10px auto ;background:#157e8b;color:aliceblue; width:620px;">
     <h1 style="padding: 10px">User Profile</h1>
 </div>
-<div class="content" style="margin:auto;width:620px;height:auto;display:flex;justify-content:space-evenly;align-items:center;gap:20px;border:1px solid #2ce0f8;">
+<div class="content" style="margin:auto;width:620px;height:auto;display:flex;justify-content:space-evenly;align-items:center;gap:20px;border:2px solid #157e8b;">
     <div class="user-details">
         <h2 style="">Hi, <span id="name" style="color:brown;font-weight:600"></span></h2>
         <p style="color: brown; font-weight:600">Email: <span id="email"></span></p>
@@ -44,45 +49,11 @@
 
 <script>
 
-    // Function to redirect to login page after token expiration and remove token from local storage
-function redirectToLoginAfterExpiration(expirationTime) {
-    const currentTime = Date.now();
-    const timeUntilExpiration = expirationTime - currentTime;
-    if (timeUntilExpiration > 0) {
-        setTimeout(function() {
-            // Remove token from local storage
-            localStorage.removeItem('token');
-            // Redirect to login page
-            window.location.href = '/login';
-        }, timeUntilExpiration);
-    } else {
-        // Token has already expired, remove it immediately
-        localStorage.removeItem('token');
-        // Redirect to login page
-        window.location.href = '/login';
-    }
-}
-
-// Function to check JWT token expiration
-function checkTokenExpiration() {
-    if (!token) {
-        // Token not found, redirect to login page
-        window.location.href = '/login';
-        return;
-    }
-    // Decode the token to get expiration time
-    const decodedToken = JSON.parse(atob(token.split('.')[1]));
-    const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
-    // Redirect to login page after token expiration and remove token from local storage
-    redirectToLoginAfterExpiration(expirationTime);
-}
-
         const DomainName = window.location.origin;
         // let token = localStorage.getItem('token');
 
         // fetching profile data from api
         $(document).ready(function(){
-            checkTokenExpiration();
             $.ajax({
                 url: `${DomainName}/api/profile`,
                 type: 'GET',
@@ -110,7 +81,7 @@ function checkTokenExpiration() {
                             $('#verify').html(`Verified`);
                             $("#verify").css({"font-size": "1rem",
                                 "padding": "3px 6px",
-                                "color": "limegreen",
+                                "color": "#1ec04e",
                                 "cursor": "pointer",
 
                             });
@@ -118,24 +89,6 @@ function checkTokenExpiration() {
 
                     } else {
                         res.msg
-                    }
-                }
-            })
-        })
-
-        // logout click function
-        $('#logout').on('click',function(){
-            console.log('logout');
-            $.ajax({
-                url: `${DomainName}/api/logout`,
-                type: 'GET',
-                headers: {'Authorization': token},
-                success: function(res){
-
-                     if (res.success == true) {
-                        console.log(res.msg);
-                        localStorage.removeItem('token');
-                        window.open('/login', '_self');
                     }
                 }
             })
