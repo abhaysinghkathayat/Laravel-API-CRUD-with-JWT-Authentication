@@ -1,0 +1,128 @@
+create api route
+route::get('/send-verify-mail/{email}', [UserController::class, 'sendVerifyMail']);
+
+    // send verification mail with verify link
+    public function sendVerifyMail($email)
+    {
+        if (auth()->user()){
+            $user = User::where('email', $email)->get();
+            if (count($user) > 0) {
+                // random url bananor jnne, 40ta random word nilam,domain nilam
+                // sese url banalam agula diye
+                $random = Str::random(40);
+                $domain = URL::to('/');
+                $url = $domain.'/verify-mail/'.$random;
+
+                // Mail 'view' page e email er data send krte hobe, tai $data variable e kore
+                // url, email,title,body pathiye dilam 'data' array akare.
+                $data['url'] = $url;
+                $data['email'] = $email;
+                $data['title'] = 'Email Verification';
+                $data['body'] = 'Please click here to below verify your mail';
+
+                Mail::send('verifyMail', ['data'=>$data], function($message) use ($data){
+                    $message->to($data['email'])->subject($data['title']);
+                });
+
+                $user = User::find($user[0]['id']);
+                $user->remember_token = $random;
+                $user->save();
+                return response()->json([
+                    'success' => true,
+                    'msg' => 'Mail Sent Successfully',
+                ]);
+
+
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'User not found.',
+                ]);
+            }
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'msg' => 'User is Not Authenticated',
+            ]);
+        }
+    }
+
+
+verifyMail blade file
+    <h1>Laravel jwt auth API Project</h1>
+
+    <p>Subject: {{$data['title']}}</p>
+    <p>{{$data['body']}}</p>
+    <a href="{{$data['url']}}">Click here to Verify Mail</a>
+    <p>Regards,</p>
+    <p>Laravel JWT API</p>
+
+
+    // token link after verification message
+    public function verificationMail($token)
+    {
+        $user = User::where('remember_token', $token)->get();
+        if (count($user) > 0) {
+            $datetime = Carbon::now()->format('Y-m-d H:i:s');
+            $user = User::find($user[0]['id']);
+            $user->remember_token = '';
+            $user->is_verified = 1;
+            $user->email_verified_at = $datetime;
+            $user->save();
+
+            return "<h1>Email Verified Successfully</h1>";
+
+
+        } else {
+            return view('404');
+        }
+
+    }
+
+
+email verification profile blade javascript code
+        // Email Verification
+        $('#verify').on('click',function(){
+            let mail = $(this).attr('data-id');
+            console.log('verify click');
+            $.ajax({
+                url: `${DomainName}/api/send-verify-mail/${mail}`,
+                type: 'GET',
+                headers: {'Authorization': token},
+                success: function(res){
+                    $('#error').append(`<h3 style="color:green;">${res.msg}</h3>`)
+                    setTimeout(() => {
+                        $('#error').empty()
+                    }, 5000);
+                }
+            })
+         })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
