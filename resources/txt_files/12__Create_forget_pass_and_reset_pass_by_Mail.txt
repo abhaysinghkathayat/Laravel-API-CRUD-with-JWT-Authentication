@@ -1,0 +1,180 @@
+Create Forget Password API and Reset Password by Mail
+
+=======create Model====
+larvel e default vabe 'password_reset_tokens' name akti table thake password reset er jnne. amra adike ai table ti use krbo, tai akti model create krlam 'PasswordReset' name, custom vabe bole dite hobe ati 'password_reset_tokens' table ke use krbe. ar timestamps false kore dite hobe and primaryKey 'email' krte hobe.
+class PasswordReset extends Model
+{
+    use HasFactory;
+
+    public $table = 'password_reset_tokens';
+    public $timestamps = false;
+    protected $primaryKey = 'email';
+
+    protected $fillable = [
+        'email',
+        'token',
+        'created_at'
+    ];
+}
+
+=====create api route for 'forget-password'============
+route::post('/forget-password', [PasswordResetController::class, 'forgetPassword']);
+
+=========create 'PasswordResetController'==========
+'/forget-password'route er 'forgetPassword'function banate hobe, mail adik thekei banate hobe. mailer vitor password reset krar link thakbe, mailer jnne akti view page 'forgetPasswordMail' create krte hobe. jate controller theke data gulo sei pager sathe mail hisebe chole jay. 
+    public function forgetPassword(Request $request)
+    {
+        try {
+            $user = User::where('email', $request->email)->get();
+            if (count($user) > 0) {
+                // random url bananor jnne, 40ta random word nilam,domain nilam
+                // sese url banalam agula diye
+                $token = Str::random(40);
+                $domain = URL::to('/');
+                $url = $domain.'/reset-password?token='.$token;
+
+                // Mail 'view' page e email er data send krte hobe, tai $data variable e kore
+                // url, email,title,body pathiye dilam 'data' array akare.
+                $data['url'] = $url;
+                $data['email'] = $request->email;
+                $data['title'] = 'Password Reset';
+                $data['body'] = 'Please click on below link to reset your password';
+
+                Mail::send('forgetPasswordMail', ['data'=>$data], function($message) use ($data){
+                    $message->to($data['email'])->subject($data['title']);
+                });
+
+                $datetime = Carbon::now()->format('Y-m-d H:i:s');
+		//password_reset_token table e jdi ager pathano kono email thake tahle seta update hobe,
+		//ar jdi email na thake tahle new email create hobe.
+		//updateOrCreate() function e first array te condition ney, ar porer array te value ney.
+                PasswordReset::updateOrCreate(
+                    ['email'=>$request->email],
+                    [
+                        'email'=>$request->email,
+                        'token'=>$token,
+                        'created_at'=>$datetime,
+                    ],
+                );
+		//tarpor sob kichu thik thakle success msg dibe
+                return response()->json([
+                    'success' => true,
+                    'msg' => 'Please Check Your mail to reset Your password',
+                ]);
+
+
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'User not found.',
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' => $e->getMessage(),
+            ]);
+
+        }
+
+    }
+
+
+======forgetPasswordMail blade file========
+    <h1>Laravel jwt auth API Project</h1>
+
+    <p>Subject: {{$data['title']}}</p>
+    <p>{{$data['body']}}</p>
+    <a href="{{$data['url']}}">Click here to Reset Your Password</a>
+    <p>Regards,</p>
+    <p>Laravel JWT API</p>
+
+========create route for reset-password form show and submit===========
+route::get('/reset-password', [PasswordResetController::class, 'resetPasswordLoad']);
+route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+
+====='resetPasswordLoad function==========
+jokhon email e reset password link jabe, tokon sei link theke reset password form show krte ai function. akti new view file create krte hobe 'resetPassword' name, er sathe 'user' er data gulo compact kore pathate hobe.
+    public function resetPasswordLoad(Request $request)
+    {
+	// 'password_reset_tokens' table theke generate kra token ke dhora holo.
+	// reset-password route e asa token, abong table theke token dutokei dhora hoise, jate kono error na thake
+	//passwordReset table er mail sathe user er mail match kore user ke dhora holo
+	//je user pabe, tar data 'resetPassword' view page e pathano holo
+        $resetData = PasswordReset::where('token', $request->token)->get();
+        if (isset($request->token) AND count($resetData) > 0) {
+            $user = User::where('email', $resetData[0]['email'])->get();
+            return view('resetPassword', compact('user'));
+        } else {
+            return view('404');
+        }
+
+    }
+
+======='resetPassword' blade file===========
+@if($errors->any())
+    <ul>
+        @foreach ($errors->all() as $error)
+            <li>{{$error}}</li>
+        @endforeach
+    </ul>
+@endif
+
+<h1>Reset Your Password</h1>
+
+<form method="POST">
+    @csrf
+    <input type="hidden" name="id" value="{{ $user[0]['id'] }}">
+    <label for="">Password: </label>
+    <input type="password" name="password" placeholder="Enter new password"><br><br>
+    <label for="">Confirm Password: </label>
+    <input type="password" name="password_confirmation" placeholder="Confirm Password"><br><br>
+    <input type="submit">
+</form>
+
+======='resetPassword' function in controller====
+jokhon 'resetPassword' view file ti show krbe er porer kaj new password set kra.
+ar seta ai controller dhara 'POST' method er maddhome 'resetPassword' form theke data niye kra hoise.
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::find($request->id);
+        $user->password = Hash::make($request->password);
+        $user->save();
+	
+	//new password save howar pore, PasswordReset table e data chilo setike delete kra holo. 
+	//jate passwordreset link e gele form ti ar na paowa jay. token o thakbe na, form o show krbe na
+        PasswordReset::where('email', $user->email)->delete();
+
+        return "<h1 style='text-align:center;color:green;'>Your password has been reset Successfully.</h1>";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\PasswordResetController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,8 +21,9 @@ use Illuminate\Support\Facades\Route;
 // });
 // http://127.0.0.1:8000/api/register @ $ #
 
-route::group(['middleware'=>'api'], function(){
+route::post('/forget-password', [PasswordResetController::class, 'forgetPassword']);
 
+route::group(['middleware'=>'api'], function(){
     route::post('/register', [UserController::class, 'register']);
     route::post('/login', [UserController::class, 'login']);
     route::get('/logout', [UserController::class, 'logout']);

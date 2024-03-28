@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\PasswordResetController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,9 @@ Route::get('/profile', function () {
 })->name('profile');
 
 route::get('/verify-mail/{token}', [UserController::class, 'verificationMail']);
+
+route::get('/reset-password', [PasswordResetController::class, 'resetPasswordLoad']);
+route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 
 
