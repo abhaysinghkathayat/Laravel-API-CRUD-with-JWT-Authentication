@@ -1,0 +1,8 @@
+TTl means token Refresh 'time to live.
+atar configuration thake 'config>jwt.php' file e.
+jdi token expiration time set krte hoy tahle
+
+jwt.php file e ase minutes value change krte hobe.60 mane 60 minutes.
+'ttl' => env('JWT_TTL', 60),
+
+acharao .env file e 'JWT_TTl' = 60 bole dileo kaj krbe, but 'jwt.php' file e change krai valo.
