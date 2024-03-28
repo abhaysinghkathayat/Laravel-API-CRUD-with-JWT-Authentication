@@ -5,14 +5,14 @@
     console.log(token);
     let pathName = window.location.pathname;
 
-    if (pathName == '/login' || pathName == '/register') {
+    // jdi token thake tahle '/login,/register,/forget-password' page e jete parbe na.
+    // na thakle direct login page e return krbe
+    if (pathName == '/login' || pathName == '/register' || pathName == '/forget-password') {
         if (token != null ) {
-            // window.open('/profile', '_self')
             window.location.href = '/profile';
         }
     } else {
         if (token == null ) {
-            // window.open('/login', '_self')
             window.location.href = '/login';
         }
     }
