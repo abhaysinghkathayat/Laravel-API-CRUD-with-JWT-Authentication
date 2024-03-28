@@ -1,0 +1,62 @@
+<script>
+
+=======token thakle ki hobe, na thakle ki hobe==========
+    let token = localStorage.getItem("token");
+    console.log(token);
+    let pathName = window.location.pathname;
+
+    // jdi token thake tahle '/login,/register,/forget-password' page e jete parbe na.
+    // na thakle direct login page e return krbe
+    if (pathName == '/login' || pathName == '/register' || pathName == '/forget-password') {
+        if (token != null ) {
+            window.location.href = '/profile';
+        }
+    } else {
+        if (token == null ) {
+            window.location.href = '/login';
+        }
+    }
+
+=========token expiration time complete hole automatic login page e redirect krbe============
+    // if token expires then automatic go back to login page code
+    // Function to redirect to login page after token expiration and remove token from local storage
+    function redirectToLoginAfterExpiration(expirationTime) {
+        const currentTime = Date.now();
+        const timeUntilExpiration = expirationTime - currentTime;
+        if (timeUntilExpiration > 0) {
+            setTimeout(function() {
+                // Remove token from local storage
+                localStorage.removeItem('token');
+                // Redirect to login page
+                window.location.href = '/login';
+            }, timeUntilExpiration);
+        } else {
+            // Token has already expired, remove it immediately
+            localStorage.removeItem('token');
+            // Redirect to login page
+            window.location.href = '/login';
+        }
+    }
+
+    // Function to check JWT token expiration
+    function checkTokenExpiration() {
+        if (!token) {
+            // Token not found, redirect to login page
+            window.location.href = '/login';
+            return;
+        }
+        // Decode the token to get expiration time
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
+        // Redirect to login page after token expiration and remove token from local storage
+        redirectToLoginAfterExpiration(expirationTime);
+    }
+    $(document).ready(function(){
+        checkTokenExpiration();
+    });
+
+
+
+
+
+</script>
