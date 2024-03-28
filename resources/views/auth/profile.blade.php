@@ -108,7 +108,8 @@
                     if (res.success == true) {
                             $('#error').append(`<h3 style="color:green;">${res.msg}</h3>`)
                             setTimeout(() => {
-                                $('#error').empty()
+                                $('#error').empty();
+                                window.location.reload();
                             }, 1500);
 
                     } else if (res.success == false) {

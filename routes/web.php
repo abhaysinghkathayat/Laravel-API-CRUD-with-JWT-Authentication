@@ -37,6 +37,12 @@ route::get('/verify-mail/{token}', [UserController::class, 'verificationMail']);
 route::get('/reset-password', [PasswordResetController::class, 'resetPasswordLoad']);
 route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
+Route::get('/forget-password', function () {
+    return view('forgetPassword');
+})->name('forget-password');
+
+
+
 
 
 
